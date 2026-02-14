@@ -49,3 +49,7 @@ main {
     font-weight: bold;
     cursor: pointer;
 }
+
+.dice-container button.onHold {
+    background-color: #59E391;
+}

@@ -1,5 +1,10 @@
 export default function Die(props) {
     return (
-        <button>{props.value}</button>
+        <button
+            onClick={props.handleClick}
+            className= {props.dieSetup.onHold ? "onHold" : ""}
+        >
+            {props.dieSetup.currentValue}
+        </button>
     )
 }
