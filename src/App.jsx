@@ -19,24 +19,42 @@ export default function App() {
   }
 
   function rollDice() {
-    setDice(prev => prev.map((die=> die.onHold ? die : {...die, currentValue: getRandomDieValue()})));
+    setDice(prev => prev.map((die => die.onHold ? die : { ...die, currentValue: getRandomDieValue() })));
+  }
+
+  function isWon() {
+    let current= dice[0].currentValue;
+    for (let i= 1; i<10; i++) {
+      if (current!==dice[i].currentValue) 
+        return false;
+    }
+    return true;
   }
 
   return (
     <main>
-      <div className="dice-container">
-        {dice.map(die =>
-          <Die
-            key= {die.dieIndex}
-            dieSetup= {die}
-            handleClick={() => holdDie(die.dieIndex)}
-          />
-        )}
+      <div className="game-container">
+        <div className="dice-container">
+          {dice.map(die =>
+            <Die
+              key={die.dieIndex}
+              dieSetup={die}
+              handleClick={() => holdDie(die.dieIndex)}
+            />
+          )}
+        </div>
+        <button onClick={() => rollDice()}>roll</button>
       </div>
-      <button onClick={()=>rollDice()}>roll</button>
+
+    {isWon() && <p>Spiel gewonnen!</p>}
+
     </main>
   )
 }
+
+/*###########*/
+/*## UTILS ##*/
+/*###########*/
 
 function getRandomDieValue() {
   return Math.ceil(Math.random() * 6);
