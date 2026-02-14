@@ -9,13 +9,17 @@ export default function App() {
       .fill(0)
       .map((d, i) => ({
         dieIndex: i,
-        currentValue: Math.ceil(Math.random() * 6),
+        currentValue: getRandomDieValue(),
         onHold: false
       }))
   }
 
   function holdDie(dieIndex) {
     setDice(dice.toSpliced(dieIndex, 1, { ...dice[dieIndex], onHold: true }));
+  }
+
+  function rollDice() {
+    setDice(prev => prev.map((die=> die.onHold ? die : {...die, currentValue: getRandomDieValue()})));
   }
 
   return (
@@ -29,6 +33,11 @@ export default function App() {
           />
         )}
       </div>
+      <button onClick={()=>rollDice()}>roll</button>
     </main>
   )
+}
+
+function getRandomDieValue() {
+  return Math.ceil(Math.random() * 6);
 }
