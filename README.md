@@ -9,5 +9,5 @@ Check **branch "reini"** for my solution without tutorial
 
 ## proposed Improvements
 
-- Add a Timer and a roll counter to see how quickly you can win the game
+- ✅ Add a Timer and a roll counter to see how quickly you can win the game
 

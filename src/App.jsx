@@ -1,13 +1,21 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Die from "./Die"
 import { nanoid } from "nanoid"
 import Confetti from "react-confetti"
+import { getTimeString } from "./utils"
 
 export default function App() {
   const [dice, setDice] = useState(() => generateAllNewDice());
+  const [time, setTime] = useState(0);
+  const timeInterval = useRef({});
 
-  const gameWon = dice.every(die => die.isHeld) &&
-    dice.every(die => die.value === dice[0].value)
+
+  function isGameWon() {
+    let isWon= dice.every(die => die.isHeld) &&
+      dice.every(die => die.value === dice[0].value);
+    isWon && stopTime();
+    return isWon;
+  }
 
   function generateAllNewDice() {
     return new Array(10)
@@ -28,11 +36,33 @@ export default function App() {
   }
 
   function hold(id) {
+    dice.every((die) => !die.isHeld) && startTime();
     setDice(oldDice => oldDice.map(die =>
       die.id === id ?
-        { ...die, isHeld: !die.isHeld } :
-        die
+      { ...die, isHeld: !die.isHeld } :
+      die
     ))
+  }
+
+  function startTime() {
+    timeInterval.current = setInterval(() => setTime(prev => prev + 1), 1000);
+  }
+
+  function stopTime() {
+    console.log('stopTime()'); ///DEBUG
+    clearInterval(timeInterval.current);
+  }
+
+  function resetTime() {
+    setTime(0);
+  }
+
+  function cheat() {
+    setDice(prev=>prev.map(die=>({
+      ...die,
+      value: 6,
+      isHeld: true  
+    })));
   }
 
   const diceElements = dice.map(dieObj => (
@@ -46,18 +76,23 @@ export default function App() {
 
   return (
     <main>
-      {gameWon && <Confetti />}
+      {isGameWon() && <Confetti />}
       <h1 className="title">Tenzies</h1>
       <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
       <div className="dice-container">
         {diceElements}
       </div>
-      <button
-        className="roll-dice"
-        onClick={gameWon ? () => setDice(generateAllNewDice()) : rollDice}
-      >
-        {gameWon ? "New Game" : "Roll"}
-      </button>
+      <div className="controls-container">
+        <p>{getTimeString(time)}</p>
+        <button
+          className="roll-dice"
+          onClick={isGameWon() ? () => setDice(generateAllNewDice()) : rollDice}
+        >
+          {isGameWon() ? "New Game" : "Roll"}
+        </button>
+        <p>count</p>
+      </div>
+      <button onClick={cheat}>cheat</button>
     </main>
   )
 }
