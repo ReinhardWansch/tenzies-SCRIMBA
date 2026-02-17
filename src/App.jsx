@@ -8,6 +8,7 @@ export default function App() {
   const [dice, setDice] = useState(() => generateAllNewDice());
   const [time, setTime] = useState(0);
   const timeInterval = useRef({});
+  const [rollCount, setRollCount]= useState(0);
 
 
   function isGameWon() {
@@ -28,6 +29,7 @@ export default function App() {
   }
 
   function rollDice() {
+    setRollCount(prev=>prev+1);
     setDice(oldDice => oldDice.map(die =>
       die.isHeld ?
         die :
@@ -49,12 +51,17 @@ export default function App() {
   }
 
   function stopTime() {
-    console.log('stopTime()'); ///DEBUG
     clearInterval(timeInterval.current);
   }
 
   function resetTime() {
     setTime(0);
+  }
+
+  function resetGame() {
+    resetTime();
+    setRollCount(0);
+    setDice(generateAllNewDice());
   }
 
   function cheat() {
@@ -86,11 +93,11 @@ export default function App() {
         <p>{getTimeString(time)}</p>
         <button
           className="roll-dice"
-          onClick={isGameWon() ? () => setDice(generateAllNewDice()) : rollDice}
+          onClick={isGameWon() ? resetGame : rollDice}
         >
           {isGameWon() ? "New Game" : "Roll"}
         </button>
-        <p>count</p>
+        <p>Rolls: {rollCount}</p>
       </div>
       <button onClick={cheat}>cheat</button>
     </main>
